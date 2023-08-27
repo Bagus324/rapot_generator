@@ -1,4 +1,4 @@
-# rapot_generator
+# rapot_generator (Work in progress)
 
 Ini adalah web untuk melakukan input nilai murid yang nantinya akan digenerate dalam bentuk pdf untuk didownload atau di preview agar langsung di print out
 Web ini dibuat menggunakan Bootstrap dengan Vanilla PHP sebagai Back-end
