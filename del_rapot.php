@@ -4,7 +4,7 @@ require 'fungsi.php';
 if (!isset($_SESSION['login_status'])) {
     header("Location: login.php");
 }
-$id = $_SESSION['id_user'];
+$id_user = $_SESSION['id_user'];
 $nama = $_SESSION['nama'];
 $id_rapot = $_GET['id'];
 $id_siswa = $_GET['siswa'];

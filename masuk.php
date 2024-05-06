@@ -15,9 +15,10 @@ if (isset($_POST['login'])) {
     if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);
         if ($row['password'] === $password) {
-            $_SESSION['id_user'] = $row['id'];
-            $_SESSION['nama'] = $row['username'];
+            $_SESSION['id_user'] = $row['id_user'];
+            $_SESSION['nama'] = $row['nama'];
             $_SESSION['login_status'] = true;
+            $_SESSION['role'] = $row['role'];
             header("Location: siswa.php");
             exit;
         }

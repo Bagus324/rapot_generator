@@ -4,13 +4,14 @@ require 'fungsi.php';
 if (!isset($_SESSION['login_status'])) {
     header("Location: login.php");
 }
-$id = $_SESSION['id_user'];
+$id_user = $_SESSION['id_user'];
 $nama = $_SESSION['nama'];
 $id = $_GET['id'];
 
-$data_siswa = querydb("SELECT * FROM siswa WHERE id_siswa = $id");
+$data_siswa = querydb("SELECT *, k.nama_kelas FROM siswa s JOIN kelas k ON s.id_kelas = k.id_kelas WHERE id_siswa = $id");
 
 if (isset($_POST['submit'])) {
+    $_POST['id_siswa'] = $id;
 
     $output = del_siswa($_POST);
     if ($output > 0) {
@@ -75,14 +76,14 @@ include 'parts/top.php'
                     
                     <form action="" method="post">
                         <?php foreach ($data_siswa as $row ):?>
-                        <label class="col-sm-2 col-form-label">ID Siswa</label>
-                        <input class="form-control" type="text" value="<?= $row['id_siswa']; ?>" name="id_siswa" readonly>
                         <label class="col-sm-2 col-form-label">Nama Siswa</label>
                         <input class="form-control" type="text" value="<?= $row['nama']; ?>" name="nama" readonly>
                         <label class="col-sm-2 col-form-label">NIS Siswa</label>
                         <input class="form-control" type="text" value="<?= $row['nis']; ?>" name="nis" readonly>
                         <label class="col-sm-2 col-form-label">Jenis Kelamin</label>
                         <input class="form-control" type="text" value="<?= $row['jk']; ?>" name="jk" readonly>
+                        <label class="col-sm-2 col-form-label">Kelas</label>
+                        <input class="form-control" type="text" value="<?= $row['nama_kelas']; ?>" name="jk" readonly>
                         <?php endforeach ?>
                         <button class="btn btn-primary btn-user mt-3" type="submit" name="submit">
                             Submit

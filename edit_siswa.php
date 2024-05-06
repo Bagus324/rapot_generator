@@ -4,15 +4,19 @@ require 'fungsi.php';
 if (!isset($_SESSION['login_status'])) {
     header("Location: login.php");
 }
-$id = $_SESSION['id_user'];
+$id_user = $_SESSION['id_user'];
 $nama = $_SESSION['nama'];
 $id = $_GET['id'];
 
 $data_siswa = querydb("SELECT * FROM siswa WHERE id_siswa = $id");
+$data_kelas = querydb("SELECT * FROM kelas ORDER BY nama_kelas ASC");
+
+
 
 
 if (isset($_POST['submit'])) {
     // var_dump($_POST);
+    $_POST['id_siswa'] = $id;
     $output = edit_siswa($_POST);
     if ($output > 0) {
         echo "
@@ -23,9 +27,8 @@ if (isset($_POST['submit'])) {
         ";
         // header("Location: siswa.php");
     } else {
-        echo "<script> alert('Terdapat kesalahan, Data Siswa gagal dihapus')</script>";
+        echo "<script> alert('Terdapat kesalahan, Data Siswa gagal diganti')</script>";
     }
-
 }
 
 
@@ -36,14 +39,19 @@ if (isset($_POST['submit'])) {
 <html lang="en">
 
 <head>
-<?php
-include 'parts/head.php';
-include 'parts/bs.php';
-?>
+    <?php
+    include 'parts/head.php';
+    include 'parts/bs.php';
+    ?>
 
 
 
-
+    <style>
+        input[type=radio] {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -53,8 +61,8 @@ include 'parts/bs.php';
 
         <!-- Sidebar -->
         <?php
-include 'parts/side.php'
-?>
+        include 'parts/side.php'
+        ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -65,36 +73,72 @@ include 'parts/side.php'
 
                 <!-- Topbar -->
                 <?php
-include 'parts/top.php'
-?>
+                include 'parts/top.php'
+                ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
                 <!-- Page Heading -->
                 <div class="container-fluid">
 
-                    
-                    <form action="" method="post">
-                        <?php foreach ($data_siswa as $row ):?>
-                        <label class="col-sm-2 col-form-label">ID Siswa</label>
-                        <input class="form-control" type="text" value="<?= $row['id_siswa']; ?>" name="id_siswa" readonly>
-                        <label class="col-sm-2 col-form-label">Nama Siswa</label>
-                        <input class="form-control" type="text" value="<?= $row['nama']; ?>" name="nama">
-                        <label class="col-sm-2 col-form-label">NIS Siswa</label>
-                        <input class="form-control" type="text" value="<?= $row['nis']; ?>" name="nis">
-                        <label class="col-sm-2 col-form-label">Jenis Kelamin</label></br>&nbsp;&nbsp;
-                        <?php
-                            if ($row['jk']=="Perempuan"):
-                        ?>
-                        <input type="radio" name="jk" id="lk" value="Laki - Laki"><b> Laki - Laki &nbsp;&nbsp;&nbsp;&nbsp;</b>
-                        <input type="radio" name="jk" id="pr" value="Perempuan" checked><b> Perempuan</b></br>
 
-                        <?php else: ?>
-                        <input type="radio" name="jk" id="lk" value="Laki - Laki" checked><b> Laki - Laki &nbsp;&nbsp;&nbsp;&nbsp;</b>
-                        <input type="radio" name="jk" id="pr" value="Perempuan" ><b> Perempuan</b></br>
-                        <?php  endif ?>
-                        
+                    <form action="" method="post">
+                        <?php foreach ($data_siswa as $row) : ?>
+                            <p style="font-size: 20px; font-weight: bold;">Nama Siswa</p>
+
+                            <input class="form-control col-sm-3" type="text" value="<?= $row['nama']; ?>" name="nama"><br />
+                            <p style="font-size: 20px; font-weight: bold;">NIS Siswa</p>
+
+                            <input class="form-control col-sm-3" type="text" value="<?= $row['nis']; ?>" name="nis">
+                            <br />
+                            <p style="font-size: 20px; font-weight: bold;">Jenis Kelamin</p>
+
+                            <?php
+                            if ($row['jk'] == "Perempuan") :
+                            ?>
+                                <input type="radio" name="jk" id="lk" value="Laki - Laki"><b style="font-weight: bold; font-size: 20px; "> Laki - Laki &nbsp;&nbsp;&nbsp;&nbsp;</b>
+                                <input type="radio" name="jk" id="pr" value="Perempuan" checked><b style="font-weight: bold; font-size: 20px; "> Perempuan</b></br>
+
+                            <?php else : ?>
+                                <input type="radio" name="jk" id="lk" value="Laki - Laki" checked><b style="font-weight: bold; font-size: 20px; "> Laki - Laki &nbsp;&nbsp;&nbsp;&nbsp;</b>
+                                <input type="radio" name="jk" id="pr" value="Perempuan"><b style="font-weight: bold; font-size: 20px; "> Perempuan</b></br>
+                            <?php endif ?>
+
                         <?php endforeach ?>
+                        <br />
+                        <div class="form-group">
+                            <p style="font-size: 20px; font-weight: bold;">Firqoh Siswa</p>
+                            <select class="form-control col-sm-3" id="id_kelas" name="id_kelas">
+                                <?php foreach ($data_kelas as $row) {
+
+                                    echo ($row['id_kelas'] == $data_siswa[0]["id_kelas"]) ? "<option value=" . $row['id_kelas'] . " selected>" . $row['nama_kelas'] . "</option>" : "<option value=" . $row['id_kelas'] . ">" . $row['nama_kelas'] . "</option>";
+                                } ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <p style="font-size: 20px; font-weight: bold;">Bacaan Siswa</p>
+                            <select class="form-control col-sm-3" id="id_kelas" name="bacaan" required>
+                                <?php 
+                                echo ($data_siswa[0]['bacaan']=='alquran') ? "<option value='iqra'>Iqra</option><option value='alquran' selected>Al-Qur'an</option>" : "<option value='iqra' selected>Iqra</option><option value='alquran'>Al-Qur'an</option>";
+                                ?>
+
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <p style="font-size: 20px; font-weight:bold;">Progress Bacaan Siswa</p>
+                            <?php 
+                            if (isset($data_siswa[0]['index_bacaan'])){
+                                echo("<input type='number' id='progres' name='progres' min='1' class='form-control col-sm-3' value='".$data_siswa[0]['index_bacaan']."' required>");
+                            }else{
+                                echo("<input type='number' id='progres' name='progres' min='1' class='form-control col-sm-3' value='1' required>");
+                            }
+                            ?>
+                        </div>
+
+
+
                         <button class="btn btn-primary btn-user mt-3" type="submit" name="submit">
                             Submit
                         </button>
@@ -113,7 +157,7 @@ include 'parts/top.php'
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        
+
                     </div>
                 </div>
             </footer>
@@ -131,8 +175,7 @@ include 'parts/top.php'
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

@@ -4,9 +4,9 @@ require 'fungsi.php';
 if (!isset($_SESSION['login_status'])) {
     header("Location: login.php");
 }
-$id = $_SESSION['id_user'];
+$id_user = $_SESSION['id_user'];
 $nama = $_SESSION['nama'];
-$data_rapot = querydb("SELECT r.id_rapot, r.id_siswa, s.nama, r.tanggal FROM rapot AS r JOIN siswa AS s ON r.id_siswa = s.id_siswa");
+$data_rapot = querydb("SELECT r.id_rapot, r.id_siswa, s.nama, r.tanggal FROM rapot AS r JOIN siswa AS s ON r.id_siswa = s.id_siswa WHERE r.id_ta = (SELECT MAX(id_ta) as id_ta FROM tahun_ajaran) AND r.is_listed = 1");
 
 ?>
 
@@ -16,7 +16,6 @@ $data_rapot = querydb("SELECT r.id_rapot, r.id_siswa, s.nama, r.tanggal FROM rap
 <head>
 <?php
 include 'parts/head.php';
-include 'parts/bs.php';
 ?>
 
 
@@ -57,25 +56,25 @@ include 'parts/top.php'
 
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
+                    <span style="text-align: right;"><a class="btn btn-primary" href="list_unrapot.php" style="width:165px;">Buat Rapot Baru&ensp;<i class="fa fa-plus" aria-hidden="true"></i></a></span>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Rapot Siswa</th>
                                             <th>Tanggal Rapot dibuat</th>
+                                            <th>Rapot Siswa</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($data_rapot as $row) : ?>
                                         <tr>
-                                            <td><?= $row['nama'] ?></td>
                                             <td><?= $row['tanggal'] ?></td>
+                                            <td><?= $row['nama'] ?></td>
                                             <td>
-                                                <a class="btn btn-primary"href="edit_rapot.php?id=<?= $row['id_rapot']; ?>&siswa=<?= $row['id_siswa']; ?>">Open&ensp;<i class="fa fa-window-maximize" aria-hidden="true"></i></a>
-                                                <a class="btn btn-danger" href="del_rapot.php?id=<?= $row['id_rapot']; ?>&siswa=<?= $row['id_siswa']; ?>">Delete&ensp;<i class="fa fa-trash" aria-hidden="true"></i></a>
-                                                <a class="btn btn-primary"href="print.php?id=<?= $row['id_rapot']; ?>&siswa=<?= $row['id_siswa']; ?>" target="_blank">Preview&ensp;<i class="fa fa-window-maximize" aria-hidden="true"></i></a>
+                                                <a class="btn btn-primary"href="edit_rapot.php?id_rapot=<?= $row['id_rapot']; ?>">Buka&ensp;<i class="fa fa-window-maximize" aria-hidden="true"></i></a>
+                                                <a class="btn btn-success"href="print.php?id=<?= $row['id_rapot']; ?>&siswa=<?= $row['id_siswa']; ?>" target="_blank">Cetak&ensp;<i class="fa fa-print" aria-hidden="true"></i></a>
                                             </td>
                                         </tr>
                                         <?php endforeach; ?>
@@ -133,5 +132,20 @@ include 'parts/top.php'
     </div>
 
 </body>
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
+
+<!-- Page level plugins -->
+<script src="vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script src="js/demo/datatables-rapot.js"></script>
 </html>

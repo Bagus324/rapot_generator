@@ -4,54 +4,63 @@ require 'fungsi.php';
 if (!isset($_SESSION['login_status'])) {
     header("Location: login.php");
 }
-$id = $_SESSION['id_user'];
+$id_user = $_SESSION['id_user'];
 $nama = $_SESSION['nama'];
 
 if (isset($_POST['submit'])) {
     // var_dump($_POST);
-        $output = tambah_siswa($_POST);
+    $output = tambah_siswa($_POST);
 
-        if ($output > 0) {
-            echo "<script> alert('Data siswa berhasil ditambah')</script>";
-        } else {
-            echo "<script> alert('Data siswa gagal ditambah')</script>";
-        }
+    if ($output > 0) {
+        echo "<script> alert('Data siswa berhasil ditambah')
+            window.location = 'siswa.php';
+            </script>";
+    } else {
+        echo "<script> alert('Data siswa gagal ditambah')</script>";
+    }
 }
+$data_kelas = querydb("SELECT * FROM kelas ORDER BY nama_kelas ASC");
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-<?php
-include 'parts/head.php';
-include 'parts/bs.php';
-?>
+    <?php
+    include 'parts/head.php';
+    include 'parts/bs.php';
+    ?>
 
-<style>
-    .marker{
-         /* padding : 1%; */
-         /* color: white; */
-         /* background-color: 009900; */
-         width: 100%;
-         /* border: solid black; */
-         }
-         .logo{
-         /* padding : 1%; */
-         /* color: white; */
-         /* background-color: 009900; */
-         width: 15%;
-         /* border: solid black; */
-         }
-         .kop{
-         /* padding : 1%; */
-         /* color: white; */
-         /* background-color: 009900; */
-         width: 70%;
-         /* border: solid black; */
-         }
+    <style>
+        .marker {
+            /* padding : 1%; */
+            /* color: white; */
+            /* background-color: 009900; */
+            width: 100%;
+            /* border: solid black; */
+        }
 
-</style>
+        .logo {
+            /* padding : 1%; */
+            /* color: white; */
+            /* background-color: 009900; */
+            width: 15%;
+            /* border: solid black; */
+        }
+
+        .kop {
+            /* padding : 1%; */
+            /* color: white; */
+            /* background-color: 009900; */
+            width: 70%;
+            /* border: solid black; */
+        }
+
+        input[type=radio] {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
 
 
 </head>
@@ -63,8 +72,8 @@ include 'parts/bs.php';
 
         <!-- Sidebar -->
         <?php
-include 'parts/side.php'
-?>
+        include 'parts/side.php'
+        ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -75,8 +84,8 @@ include 'parts/side.php'
 
                 <!-- Topbar -->
                 <?php
-include 'parts/top.php'
-?>
+                include 'parts/top.php'
+                ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -84,28 +93,49 @@ include 'parts/top.php'
 
                 <div class="container-fluid">
 
-                <form action="" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <p style="font-size: 20px; font-weight:bold;">Nama Siswa</p>
-                        <input type="text" class="form-control form-control-user" id="nama" name="nama" style="width: 500px;" required></input>
-                    </div>
-                    <div class="form-group">
-                        <p style="font-size: 20px;font-weight:bold;">NIS Siswa</p>
-                        <input type="text" class="form-control form-control-user" id="nis" name="nis" style="width: 500px;" required></input>
-                    </div>
-                    <div class="form-group">
-                        <input type="radio" name="jk" id="lk" value="Laki - Laki"><b> Laki - Laki &nbsp;&nbsp;&nbsp;&nbsp;</b>
-                        <input type="radio" name="jk" id="pr" value="Perempuan"><b> Perempuan</b>
-                    </div>
-                    
-                    <div class="form-group">
-                        
-                        <input class="btn btn-primary btn-user mt-3" type="submit" name="submit">
-                    </div>
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <p style="font-size: 20px; font-weight:bold;">Nama Siswa</p>
+                            <input type="text" class="form-control form-control-user col-sm-3" id="nama" name="nama" style="width: 500px;" required></input>
+                        </div>
+                        <div class="form-group">
+                            <p style="font-size: 20px;font-weight:bold;">NIS Siswa</p>
+                            <input type="text" class="form-control form-control-user col-sm-3" id="nis" name="nis" style="width: 500px;" required></input>
+                        </div>
+                        <div class="form-group">
+                            <input type="radio" name="jk" id="lk" value="Laki - Laki"><b style="font-weight: bold; font-size: 20px; "> Laki - Laki &nbsp;&nbsp;&nbsp;&nbsp;</b>
+                            <input type="radio" name="jk" id="pr" value="Perempuan"><b style="font-weight: bold; font-size: 20px; "> Perempuan</b>
+                        </div>
+                        <div class="form-group">
+                            <p style="font-size: 20px; font-weight: bold;">Firqoh Siswa</p>
+                            <select class="form-control col-sm-3" id="id_kelas" name="id_kelas">
+                                <?php foreach ($data_kelas as $row) : ?>
+                                    <option value="<?= $row['id_kelas']; ?>"><?= ucwords($row['nama_kelas']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
 
-                </form>
-                
-                    
+                        <div class="form-group">
+                            <p style="font-size: 20px; font-weight: bold;">Bacaan Siswa</p>
+                            <select class="form-control col-sm-3" id="id_kelas" name="bacaan">
+                                <option value="iqra">Iqra</option>
+                                <option value="alquran">Al-Qur'an</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <p style="font-size: 20px; font-weight:bold;">Progress Bacaan Siswa</p>
+                            <input type="number" id="progres" name="progres" min="1" class="form-control col-sm-3" value="1" required>
+                        </div>
+
+                        <div class="form-group">
+
+                            <input class="btn btn-primary btn-user mt-3" type="submit" name="submit">
+                        </div>
+
+                    </form>
+
+
 
 
                 </div>
@@ -118,7 +148,7 @@ include 'parts/top.php'
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        
+
                     </div>
                 </div>
             </footer>
@@ -136,8 +166,7 @@ include 'parts/top.php'
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
